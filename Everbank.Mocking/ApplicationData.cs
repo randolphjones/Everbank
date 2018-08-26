@@ -5,7 +5,7 @@ namespace Everbank.Mocking
 {
     public class ApplicationData
     {
-        ApplicationData _applicationData = new ApplicationData();
+        private static ApplicationData _applicationData = new ApplicationData();
         DataSet _dataSet = new DataSet();
         public DataSet DataSet
         {
@@ -15,35 +15,39 @@ namespace Everbank.Mocking
         }
         DataTable _users;
         DataTable _transactions;
-        private ApplicationData ()
+        ApplicationData ()
         {
             _users = _dataSet.Tables.Add("everbank_users");
             _users.Columns.Add("email_address");
             _users.Columns.Add("password");
             _users.Columns.Add("first_name");
+            DataColumn primaryUserColumn = _users.Columns.Add("uid", typeof(int));
+            _users.PrimaryKey = new DataColumn[] { primaryUserColumn };
             _transactions = _dataSet.Tables.Add("everbank_transactions");
             _transactions.Columns.Add("time");
             _transactions.Columns.Add("amount");
             _transactions.Columns.Add("user_id");
+            DataColumn primaryTransactionColumn = _transactions.Columns.Add("uid", typeof(int));
+            _transactions.PrimaryKey = new DataColumn[] { primaryTransactionColumn };
             FillData();
         }
 
-        public ApplicationData GetInstance()
+        public static ApplicationData GetInstance()
         {
             return _applicationData;
         }
 
         private void FillData()
         {
-            // TODO: Fill the DataSet from fixtures in a flat file
-            InsertUser("test@test.com", "Tester1", "password123");
+            InsertUser("test@test.com", "EF92B778BAFE771E89245B89ECBC08A44A4E166C06659911881F383D4473E94F", "Tester1");
             InsertTransaction(1, 200, DateTime.Now);
-            throw new NotImplementedException();
+            // TODO: Fill the DataSet from fixtures in a flat file
         }
 
         private void InsertUser(string emailAddress, string password, string firstName)
         {
             DataRow newRow = _users.NewRow();
+            newRow["uid"] = _users.Rows.Count + 1;
             newRow["email_address"] = emailAddress;
             newRow["first_name"] = firstName;
             newRow["password"] = password;
@@ -52,6 +56,7 @@ namespace Everbank.Mocking
         private void InsertTransaction(int userId, decimal amount, DateTime time)
         {
             DataRow newRow = _transactions.NewRow();
+            newRow["uid"] = _transactions.Rows.Count + 1;
             newRow["user_id"] = userId;
             newRow["amount"] = amount;
             newRow["time"] = time;

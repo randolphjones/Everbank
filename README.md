@@ -33,7 +33,7 @@ You should now be able to connect to the application locally using port 5000 (ht
 
 ## Running Unit Tests
 ```
-TODO: Unit Tests
+$ dotnet test
 ```
 
 ## Application Structure and Overview
@@ -42,5 +42,7 @@ TODO: Describe the pattern/architecture and what each project does, why this was
 * Repository Project is responsible for data access
 * This solution uses a mocked up dataset stored in a singleton but the Repository layer can be modified to connect to a database
 
-## Additions for the future
-* Make the Mockup singleton thread-safe
+## Improvements for the future
+* Make the ApplicationData singleton thread-safe
+* Improve encryption for stored passwords by salting them
+* Add Delete account feature

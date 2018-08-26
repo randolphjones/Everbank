@@ -1,6 +1,8 @@
 using System;
 using System.Data;
 using Everbank.Mocking;
+using Everbank.Repositories.Contracts;
+using Everbank.Repositories.Utilities;
 
 namespace Everbank.Repositories 
 {
@@ -11,14 +13,59 @@ namespace Everbank.Repositories
 
         }
 
-        public Contracts.User GetUser()
+        ///<summary>
+        /// Gets a user record from the dataset
+        ///</summary>
+        public User GetUser(string emailAddress)
         {
-            throw new NotImplementedException();
+            try
+            {
+                DataTable users = ApplicationData.GetInstance().DataSet.Tables["everbank_users"];
+                DataRow[] results = users.Select($"email_address = '{UserUtilities.ConformString(emailAddress)}'");
+                if (results.Length > 0)
+                {
+                    DataRow row = results[0];
+                    User user = new User() {
+                        EmailAddress = row.Field<string>("email_address"),
+                        FirstName = row.Field<string>("first_name"),
+                        Id = row.Field<int>("uid"),
+                        Password = row.Field<string>("password"),
+                    };
+                    return user;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public bool AddUser()
+        ///<summary>
+        /// Adds a new user to the DataSet
+        ///</summary>
+        public User AddUser(string emailAddress, string hashedPassword, string firstName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string conformedEmail = UserUtilities.ConformString(emailAddress);
+                DataTable users = ApplicationData.GetInstance().DataSet.Tables["everbank_users"];
+                DataRow newRow = users.NewRow();
+                newRow["uid"] = users.Rows.Count + 1;
+                newRow["email_address"] = conformedEmail;
+                newRow["first_name"] = firstName.Trim();
+                newRow["password"] = hashedPassword;
+                users.Rows.Add(newRow);
+                User newUser = GetUser(conformedEmail);
+                return newUser;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

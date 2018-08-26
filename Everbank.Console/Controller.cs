@@ -28,9 +28,11 @@ namespace Everbank.Console
         private static void LoginAccount()
         {
             System.Console.WriteLine("Enter your Email Address:");
-            string username = System.Console.ReadLine();
+            string emailAddress = System.Console.ReadLine();
             System.Console.WriteLine("Enter your Password:");
             string password = System.Console.ReadLine();
+            // UserService userService = new UserService();
+            // userService.LoginUser(emailAddress);
             // TODO: Handle successful login
             // TODO: Handle failed login - error with email address or password
             // TODO: Get first name for retrieved user and welcome them
