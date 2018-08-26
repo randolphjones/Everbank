@@ -39,7 +39,7 @@ namespace Everbank.Mocking
 
         private void FillData()
         {
-            InsertUser("test@test.com", "EF92B778BAFE771E89245B89ECBC08A44A4E166C06659911881F383D4473E94F", "Tester1");
+            InsertUser("test@test.com", "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f", "Tester1");
             InsertTransaction(1, 200, DateTime.Now);
             // TODO: Fill the DataSet from fixtures in a flat file
         }

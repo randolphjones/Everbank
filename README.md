@@ -46,3 +46,4 @@ TODO: Describe the pattern/architecture and what each project does, why this was
 * Make the ApplicationData singleton thread-safe
 * Improve encryption for stored passwords by salting them
 * Add Delete account feature
+* Increase password complexity criteria

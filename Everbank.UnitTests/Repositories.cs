@@ -33,5 +33,25 @@ namespace Everbank.UnitTests
             Assert.IsFalse(string.IsNullOrEmpty(user.EmailAddress), "User email address is null or empty");
             Assert.IsFalse(string.IsNullOrEmpty(user.FirstName), "User user first name is null or empty");
         }
+
+        [TestMethod]
+        public void CheckPasswordComplexity()
+        {
+            Assert.IsTrue(UserUtilities.CheckPasswordComplexity("password123"), "Password complexity standards not correctly enforced.");
+            Assert.IsFalse(UserUtilities.CheckPasswordComplexity("1234"), "Password complexity standards not correctly enforced.");
+            Assert.IsFalse(UserUtilities.CheckPasswordComplexity("abc"), "Password complexity standards not correctly enforced.");
+            Assert.IsFalse(UserUtilities.CheckPasswordComplexity("abc123"), "Password complexity standards not correctly enforced.");
+        }
+
+        [TestMethod]
+        public void CheckEmailValidity()
+        {
+            Assert.IsTrue(UserUtilities.CheckEmailValidity("test@test"), "Email address validity standards not correctly enforced.");
+            Assert.IsTrue(UserUtilities.CheckEmailValidity("test@test.com"), "Email address validity standards not correctly enforced.");
+            Assert.IsTrue(UserUtilities.CheckEmailValidity("test.test@test.com"), "Email address validity standards not correctly enforced.");
+            Assert.IsFalse(UserUtilities.CheckEmailValidity("@test"), "Email address validity standards not correctly enforced.");
+            Assert.IsFalse(UserUtilities.CheckEmailValidity("test.com"), "Email address validity standards not correctly enforced.");
+            Assert.IsFalse(UserUtilities.CheckEmailValidity("test"), "Email address validity standards not correctly enforced.");
+        }
     }
 }

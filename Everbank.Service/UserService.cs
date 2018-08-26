@@ -56,6 +56,31 @@ namespace Everbank.Service
         ///</summary>
         public ServiceResponse CreateUser(string emailAddress, string password, string firstName)
         {
+            bool isPasswordComplex = UserUtilities.CheckPasswordComplexity(password);
+            if (!isPasswordComplex)
+            {
+                Message errorMessage = new Message() {
+                    Text = "Please choose a password that is 8 of more characters and contains at least one letter and one number.",
+                    Type = MessageType.WARN,
+                };
+                return new ServiceResponse() {
+                    Messages = new List<Message> { errorMessage },
+                };
+            }
+
+            string conformedEmail = UserUtilities.ConformString(emailAddress);
+            bool isEmailValid = UserUtilities.CheckEmailValidity(conformedEmail);
+            if (!isEmailValid)
+            {
+                Message errorMessage = new Message() {
+                    Text = "Please supply a valid email address.",
+                    Type = MessageType.WARN,
+                };
+                return new ServiceResponse() {
+                    Messages = new List<Message> { errorMessage },
+                };
+            }
+
             try {
                 UserRepository userRepository = new UserRepository();
                 User existingUser = userRepository.GetUser(emailAddress);
