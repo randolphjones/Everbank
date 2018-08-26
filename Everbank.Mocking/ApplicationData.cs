@@ -23,10 +23,11 @@ namespace Everbank.Mocking
             _users.Columns.Add("first_name");
             DataColumn primaryUserColumn = _users.Columns.Add("uid", typeof(int));
             _users.PrimaryKey = new DataColumn[] { primaryUserColumn };
+
             _transactions = _dataSet.Tables.Add("everbank_transactions");
-            _transactions.Columns.Add("time");
-            _transactions.Columns.Add("amount");
-            _transactions.Columns.Add("user_id");
+            _transactions.Columns.Add("time", typeof(DateTime));
+            _transactions.Columns.Add("amount", typeof(decimal));
+            _transactions.Columns.Add("user_id", typeof(int));
             DataColumn primaryTransactionColumn = _transactions.Columns.Add("uid", typeof(int));
             _transactions.PrimaryKey = new DataColumn[] { primaryTransactionColumn };
             FillData();
@@ -41,6 +42,9 @@ namespace Everbank.Mocking
         {
             InsertUser("test@test.com", "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f", "Tester1");
             InsertTransaction(1, 200, DateTime.Now);
+            InsertTransaction(1, -50, DateTime.Now);
+            InsertTransaction(1, 1200, DateTime.Now);
+            InsertUser("test2@test.com", "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f", "Tester2");
             // TODO: Fill the DataSet from fixtures in a flat file
         }
 
@@ -60,6 +64,7 @@ namespace Everbank.Mocking
             newRow["user_id"] = userId;
             newRow["amount"] = amount;
             newRow["time"] = time;
+            _transactions.Rows.Add(newRow);
         }
     }
 }
