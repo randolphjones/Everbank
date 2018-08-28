@@ -1,0 +1,11 @@
+@if(ViewBag.Messages != null && ViewBag.Messages.Count > 0)
+    {
+    <section class="everbank-message-space">
+        @foreach (var message in ViewBag.Messages)
+        {
+        <div class="alert @Everbank.Web.Helpers.MessageHelper.MessageTypeToClassName(message.Type) everbank-alert">
+            @message.Text
+        </div>
+        }
+    </section>
+    }
