@@ -129,7 +129,39 @@ namespace Everbank.Web.Controllers
         [HttpPost]
         public IActionResult DepositFunds(TransactionFormModel transactionFormModel)
         {
-            throw new NotImplementedException();
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                if (transactionFormModel.Amount <= 0)
+                {
+                    Message errorMessage = new Message() {
+                        Text = "You cannot deposit zero or a negative amount. Please try again.",
+                        Type = MessageType.ERROR,
+                    };
+                    transactionFormModel.Messages = new List<Message> { errorMessage };
+                    ViewBag.IsDeposit = true;
+                    return View("Transaction", transactionFormModel);
+                }
+
+                User user = SecurityHelper.GetUserFromIdentity(HttpContext.User.Identity as ClaimsIdentity);
+                ServiceResponse response = transactionService.CreateTransaction(user.Id, transactionFormModel.Amount);
+                MessageHelper.AppendResponseMessages(messages, response);
+                Transaction transaction = response.ResponseObject as Transaction;
+                if (transaction != null)
+                {
+                    // TODO: Way to append success messages?
+                    return RedirectToAction("Dashboard");
+                }
+                else
+                {
+                    ViewBag.IsDeposit = true;
+                    transactionFormModel.Messages = messages;
+                    return View("Transaction", transactionFormModel);
+                }
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpGet]
@@ -152,7 +184,39 @@ namespace Everbank.Web.Controllers
         [HttpPost]
         public IActionResult WithdrawFunds(TransactionFormModel transactionFormModel)
         {
-            throw new NotImplementedException();
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                if (transactionFormModel.Amount <= 0)
+                {
+                    Message errorMessage = new Message() {
+                        Text = "You cannot withdraw zero or a negative amount. Please try again.",
+                        Type = MessageType.ERROR,
+                    };
+                    transactionFormModel.Messages = new List<Message> { errorMessage };
+                    ViewBag.IsDeposit = false;
+                    return View("Transaction", transactionFormModel);
+                }
+
+                User user = SecurityHelper.GetUserFromIdentity(HttpContext.User.Identity as ClaimsIdentity);
+                ServiceResponse response = transactionService.CreateTransaction(user.Id, transactionFormModel.Amount * -1);
+                MessageHelper.AppendResponseMessages(messages, response);
+                Transaction transaction = response.ResponseObject as Transaction;
+                if (transaction != null)
+                {
+                    // TODO: Way to append success messages?
+                    return RedirectToAction("Dashboard");
+                }
+                else
+                {
+                    ViewBag.IsDeposit = false;
+                    transactionFormModel.Messages = messages;
+                    return View("Transaction", transactionFormModel);
+                }
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpGet]
