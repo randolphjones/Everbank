@@ -10,7 +10,10 @@ using Everbank.Service.Contracts;
 using Everbank.Repositories.Contracts;
 using Microsoft.AspNetCore.Session;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Everbank.Web.Helpers;
+using System.Security.Claims;
 
 namespace Everbank.Web.Controllers
 {
@@ -23,8 +26,14 @@ namespace Everbank.Web.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            // TODO: Check security and redirect to Dashboard if logged in
-            return View();
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Dashboard");
+            }
+            else
+            {
+                return View();
+            }
         }
 
         [HttpPost]
@@ -36,14 +45,14 @@ namespace Everbank.Web.Controllers
             User user = response.ResponseObject as User;
             if (user != null)
             {
-                // TODO: Replace this with a redirect
-                DashboardModel dashboardModel = DashboardHelper.BuildDashboardModel(user, messages);
-                ViewBag.Messages = messages;
-                return View("Dashboard", dashboardModel);
+                // Ideally we would use async await here but the current behavior of this call is unpredictable
+                SecurityHelper.SignInAsync(HttpContext, user.Id, user.EmailAddress, user.FirstName).Wait();
+                return RedirectToAction("Dashboard");
             }
             else
             {
-                return RedirectToAction("Index");
+                ViewBag.Messages = messages;
+                return View("Index");
             }
         }
 
@@ -73,10 +82,9 @@ namespace Everbank.Web.Controllers
 
                 if (user != null)
                 {
-                    // TODO: Replace this with a redirect
-                    DashboardModel dashboardModel = DashboardHelper.BuildDashboardModel(user, messages);
-                    ViewBag.Messages = messages;
-                    return View("Dashboard", dashboardModel);
+                    // Ideally we would use async await here but the current behavior of this call is unpredictable
+                    SecurityHelper.SignInAsync(HttpContext, user.Id, user.EmailAddress, user.FirstName).Wait();
+                    return RedirectToAction("Dashboard");
                 }
                 else
                 {
@@ -86,17 +94,34 @@ namespace Everbank.Web.Controllers
             }
         }
 
+        [HttpGet]
         public IActionResult Dashboard()
         {
-            //TODO: Enforce Security
-            return View();
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                User user = SecurityHelper.GetUserFromIdentity(HttpContext.User.Identity as ClaimsIdentity);
+                DashboardModel dashboardModel = DashboardHelper.BuildDashboardModel(user, messages);
+                ViewBag.Messages = messages;
+                return View(dashboardModel);
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpGet]
         public IActionResult DepositFunds()
         {
-            ViewBag.IsDeposit = true;
-            return View("Transaction");
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                ViewBag.IsDeposit = true;
+                return View("Transaction");
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpPost]
@@ -108,8 +133,15 @@ namespace Everbank.Web.Controllers
         [HttpGet]
         public IActionResult WithdrawFunds()
         {
-            ViewBag.IsDeposit = false;
-            return View("Transaction");
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                ViewBag.IsDeposit = false;
+                return View("Transaction");
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpPost]
@@ -121,8 +153,8 @@ namespace Everbank.Web.Controllers
         [HttpGet]
         public IActionResult Logout()
         {
-            // TODO: Clear session info and redirect to index
-            throw new NotImplementedException();
+            SecurityHelper.SignOutAsync(HttpContext).Wait();
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
