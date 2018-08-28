@@ -27,7 +27,8 @@ namespace Everbank.Web.Helpers
             DashboardModel dashboardModel = new DashboardModel() {
                 User = user,
                 Transactions = transactions.OrderByDescending(transaction => transaction.Time).ToList(),
-                AccountBalance = balance
+                AccountBalance = balance,
+                Messages = messages,
             };
             return dashboardModel;
         }

@@ -51,8 +51,8 @@ namespace Everbank.Web.Controllers
             }
             else
             {
-                ViewBag.Messages = messages;
-                return View("Index");
+                loginFormModel.Messages = messages;
+                return View("Index", loginFormModel);
             }
         }
 
@@ -71,8 +71,8 @@ namespace Everbank.Web.Controllers
                     Text = "Your password confirmation does not match. Please try again.",
                     Type = MessageType.ERROR,
                 };
-                ViewBag.Messages = new List<Message> { errorMessage };
-                return View();
+                createAccountFormModel.Messages = new List<Message> { errorMessage };
+                return View(createAccountFormModel);
             }
             else
             {
@@ -88,8 +88,8 @@ namespace Everbank.Web.Controllers
                 }
                 else
                 {
-                    ViewBag.Messages = messages;
-                    return View();
+                    createAccountFormModel.Messages = messages;
+                    return View(createAccountFormModel);
                 }
             }
         }
@@ -101,7 +101,6 @@ namespace Everbank.Web.Controllers
             {
                 User user = SecurityHelper.GetUserFromIdentity(HttpContext.User.Identity as ClaimsIdentity);
                 DashboardModel dashboardModel = DashboardHelper.BuildDashboardModel(user, messages);
-                ViewBag.Messages = messages;
                 return View(dashboardModel);
             }
             else
@@ -116,7 +115,10 @@ namespace Everbank.Web.Controllers
             if (HttpContext.User.Identity.IsAuthenticated)
             {
                 ViewBag.IsDeposit = true;
-                return View("Transaction");
+                TransactionFormModel transactionFormModel = new TransactionFormModel() {
+                    Messages = messages,
+                };
+                return View("Transaction", transactionFormModel);
             }
             else
             {
@@ -136,7 +138,10 @@ namespace Everbank.Web.Controllers
             if (HttpContext.User.Identity.IsAuthenticated)
             {
                 ViewBag.IsDeposit = false;
-                return View("Transaction");
+                TransactionFormModel transactionFormModel = new TransactionFormModel() {
+                    Messages = messages,
+                };
+                return View("Transaction", transactionFormModel);
             }
             else
             {

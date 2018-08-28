@@ -2,7 +2,7 @@ using System;
 
 namespace Everbank.Web.Models
 {
-    public class CreateAccountFormModel
+    public class CreateAccountFormModel : PageModel
     {
         public string EmailAddress { get; set; }
         public string FirstName { get; set; }
