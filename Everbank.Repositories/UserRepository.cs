@@ -14,14 +14,30 @@ namespace Everbank.Repositories
         }
 
         ///<summary>
-        /// Gets a user record from the dataset
+        /// Gets a user record from the dataset by email address
         ///</summary>
         public User GetUser(string emailAddress)
+        {
+            return GetUserWithQuery($"email_address = '{UserUtilities.ConformString(emailAddress)}'");
+        }
+
+        ///<summary>
+        /// Gets a user record from the dataset by email address
+        ///</summary>
+        public User GetUser(int userId)
+        {
+            return GetUserWithQuery($"uid = {userId}");
+        }
+
+        ///<summary>
+        /// Gets a user record by Query
+        ///</summary>
+        private User GetUserWithQuery(string query)
         {
             try
             {
                 DataTable users = ApplicationData.GetInstance().DataSet.Tables["everbank_users"];
-                DataRow[] results = users.Select($"email_address = '{UserUtilities.ConformString(emailAddress)}'");
+                DataRow[] results = users.Select(query);
                 if (results.Length > 0)
                 {
                     DataRow row = results[0];
