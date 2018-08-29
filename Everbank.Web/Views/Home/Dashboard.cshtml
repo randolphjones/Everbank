@@ -1,0 +1,41 @@
+@model Everbank.Web.Models.DashboardModel
+
+@{
+    ViewData["Title"] = "Everbank";
+}
+
+<header class="row">
+    <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+        <h1>Welcome, @Model.User.FirstName!</h1>
+    </div>
+</header>
+<section class="row everbank-section">
+    <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 jumbotron everbank-dashboard-balance">
+        <div class="everbank-dashboard-balance__description">Account Balance</div>
+        <div class="everbank-dashboard-balance__amount">@string.Format("{0:C}", Model.AccountBalance)</div>
+    </div>
+</section>
+<partial name="_DashboardNav" />
+@if(Model.Transactions != null && Model.Transactions.Count > 0)
+    {
+    <section class="row everbank-section">
+        <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 everbank-transaction-table">
+        <div class="col-xs-12 everbank-transaction-row everbank-transaction-row--header">
+            <div class="col-xs-4 everbank-transaction-row__cell everbank-transaction-row__cell--left">Transaction Date</div>
+            <div class="col-xs-4 everbank-transaction-row__cell everbank-transaction-row__cell--center">Type</div>
+            <div class="col-xs-4 everbank-transaction-row__cell everbank-transaction-row__cell--right">Amount</div>
+        </div>
+
+            @foreach(var transaction in Model.Transactions)
+            {
+                <div class="col-xs-12 everbank-transaction-row">
+                    <div class="col-xs-4 everbank-transaction-row__cell everbank-transaction-row__cell--left">@transaction.Time.ToString()</div>
+                    <div class="col-xs-4 everbank-transaction-row__cell everbank-transaction-row__cell--center">@(transaction.Amount < 0 ? "Withdrawal" : "Deposit")</div>
+                    <div class="col-xs-4 everbank-transaction-row__cell everbank-transaction-row__cell--right">@(string.Format("{0:C}",transaction.Amount))</div>
+                </div>
+            }
+                
+        </div>
+    </section>
+    <!-- <partial name="_DashboardNav" /> -->
+    }

@@ -1,6 +1,9 @@
 using System;
+using System.Linq;
 using Everbank.Service;
+using Everbank.Service.Contracts;
 using Everbank.Repositories.Contracts;
+using System.Collections.Generic;
 
 namespace Everbank.Console
 {
@@ -8,6 +11,7 @@ namespace Everbank.Console
     {
         public static void Home()
         {
+            System.Console.WriteLine("Welcome to Everbank!");
             System.Console.WriteLine("Would you like to (L)ogin or Create a (N)ew Account?");
             string loginOption = System.Console.ReadLine().ToLower();
             switch (loginOption)
@@ -28,16 +32,22 @@ namespace Everbank.Console
         private static void LoginAccount()
         {
             System.Console.WriteLine("Enter your Email Address:");
-            string username = System.Console.ReadLine();
+            string emailAddress = System.Console.ReadLine();
             System.Console.WriteLine("Enter your Password:");
             string password = System.Console.ReadLine();
-            // TODO: Handle successful login
-            // TODO: Handle failed login - error with email address or password
-            // TODO: Get first name for retrieved user and welcome them
-            string firstName = "Test string";
-            System.Console.WriteLine($"Welcome back to Everbank, {firstName}.");
-            // TODO: Present banking dashboard
-            ShowDashboard();
+            UserService userService = new UserService();
+            ServiceResponse response = userService.AuthenticateUser(emailAddress, password);
+            HandleMessages(response.Messages);
+            User user = response.ResponseObject as User;
+            if (user != null)
+            {
+                System.Console.WriteLine($"Welcome back to Everbank, {user.FirstName}.");
+                ShowDashboard(user.Id);
+            }
+            else
+            {
+                Home();
+            }
         }
 
         private static void CreateAccount()
@@ -48,59 +58,127 @@ namespace Everbank.Console
             string emailAddress = System.Console.ReadLine();
             System.Console.WriteLine("Enter a Password (8 characters minimum with at least 1 number):");
             string password = System.Console.ReadLine();
-            // TODO: Validate inputs
-                // TODO: Validate email address
-            // TODO: Create the Account through business logic layer
-            // TODO: Handle duplicate account
-                // TODO: Forward to Login Page
-            System.Console.WriteLine($"Account created for {firstName} with emailAddress {emailAddress}.");
-            ShowDashboard();
+            UserService userService = new UserService();
+            ServiceResponse response = userService.CreateUser(emailAddress, password, firstName);
+            HandleMessages(response.Messages);
+            User newUser = response.ResponseObject as User;
+            if (newUser != null)
+            {
+                System.Console.WriteLine($"Account created for {newUser.FirstName} with email address {newUser.EmailAddress}.");
+                ShowDashboard(newUser.Id);
+            }
+            else
+            {
+                Home();
+            }
         }
 
-        private static void ShowDashboard()
+        private static void ShowDashboard(int userId)
         {
             System.Console.WriteLine("Would you like to (V)iew your transactions, (D)eposit funds, (W)ithdraw funds, or (L)ogout?");
             string dashboardChoice = System.Console.ReadLine().ToLower();
             switch (dashboardChoice)
             {
                 case "v":
-                    ViewTransactions();
+                    ViewTransactions(userId);
                     break;
                 case "d":
-                    DepositFunds();
+                    DepositFunds(userId);
                     break;
                 case "w":
-                    WithdrawFunds();
+                    WithdrawFunds(userId);
                     break;
                 case "l":
-                    LogoutAccount();
+                    System.Console.Write("Thank you for choosing Everbank! Have an excellent day :)");
                     break;
                 default:
                     System.Console.WriteLine("Please enter a valid option.");
-                    ShowDashboard();
+                    ShowDashboard(userId);
                     break;
             }
         }
 
-        public static void LogoutAccount()
+        private static void ViewTransactions(int userId)
         {
-            throw new NotImplementedException();
+            TransactionService transactionService = new TransactionService();
+            ServiceResponse transactionsResponse = transactionService.GetTransactions(userId);
+            HandleMessages(transactionsResponse.Messages);
+            List<Transaction> transactions = transactionsResponse.ResponseObject as List<Transaction>;
+            if (transactions.Count > 0)
+            {
+                RenderTransactionTable(transactions);
+            }
+            ServiceResponse balanceResponse = transactionService.GetAccountBalance(transactions);
+            System.Console.WriteLine();
+            HandleMessages(balanceResponse.Messages);
+            decimal balance = (decimal)balanceResponse.ResponseObject;
+            System.Console.WriteLine();
+            System.Console.ForegroundColor = ConsoleColor.Green;
+            System.Console.WriteLine($"Your Account Balance is ${balance}");
+            System.Console.ResetColor();
+            System.Console.WriteLine();
+            ShowDashboard(userId);
         }
 
-        public static void ViewTransactions()
+        private static void RenderTransactionTable(List<Transaction> transactions)
         {
-            throw new NotImplementedException();
+            List<Transaction> orderedTransactions = transactions.OrderByDescending(transaction => transaction.Time).ToList();
+            string headerText = string.Format("|{0,25}|{1,25}|", "Date", "Amount");
+            System.Console.ForegroundColor = ConsoleColor.Blue;
+            System.Console.WriteLine(headerText);
+            System.Console.ResetColor();
+
+            orderedTransactions.ForEach(transaction => {
+                string formattedAmount = string.Format("{0:C}", transaction.Amount);
+                string rowText = string.Format("|{0,25}|{1,25}|", transaction.Time.ToString(), formattedAmount);
+                System.Console.WriteLine(rowText);
+            });
         }
 
-        public static void DepositFunds()
+        private static void DepositFunds(int userId)
         {
-            throw new NotImplementedException();
+            System.Console.WriteLine("Please enter the amount you would like to deposit:");
+            string depositInput = System.Console.ReadLine();
+            decimal depositAmount;
+            if (decimal.TryParse(depositInput, out depositAmount) && depositAmount > 0)
+            {
+                TransactionService transactionService = new TransactionService();
+                ServiceResponse newDepositResponse = transactionService.CreateTransaction(userId, depositAmount);
+                HandleMessages(newDepositResponse.Messages);
+            }
+            else
+            {
+                System.Console.WriteLine("You entered an invalid amount. Please try again.");
+            }
+            System.Console.WriteLine();
+            ShowDashboard(userId);
         }
 
-        public static void WithdrawFunds()
+        private static void WithdrawFunds(int userId)
         {
-            // TODO: Enforce balance before allowing the withdrawal
-            throw new NotImplementedException();
+            System.Console.WriteLine("Please enter the amount you would like to withdraw:");
+            string withdrawalInput = System.Console.ReadLine();
+            decimal withdrawalAmount;
+            if (decimal.TryParse(withdrawalInput, out withdrawalAmount) && withdrawalAmount > 0)
+            {
+                TransactionService transactionService = new TransactionService();
+                ServiceResponse newWithdrawalResponse = transactionService.CreateTransaction(userId, withdrawalAmount * -1);
+                HandleMessages(newWithdrawalResponse.Messages);
+            }
+            else
+            {
+                System.Console.WriteLine("You entered an invalid amount. Please try again.");
+            }
+            System.Console.WriteLine();
+            ShowDashboard(userId);
+        }
+
+        private static void HandleMessages(List<Message> messages)
+        {
+            if (messages != null && messages.Count > 0)
+            {
+                messages.ForEach(message => System.Console.WriteLine(message.Text));
+            }
         }
     }
 }

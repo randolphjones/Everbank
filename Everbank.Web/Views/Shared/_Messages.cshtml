@@ -1,0 +1,15 @@
+@{
+    Everbank.Web.Helpers.MessageHelper messageHelper = new Everbank.Web.Helpers.MessageHelper();
+}
+
+@if(Model != null && Model.Messages != null && Model.Messages.Count > 0)
+    {
+    <section class="everbank-message-space">
+        @foreach (Everbank.Service.Contracts.Message message in Model.Messages)
+        {
+        <div class="alert @messageHelper.MessageTypeToClassName(message.Type) everbank-alert">
+            @message.Text
+        </div>
+        }
+    </section>
+    }

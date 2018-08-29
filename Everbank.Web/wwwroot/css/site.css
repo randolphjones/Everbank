@@ -8,33 +8,95 @@ body {
     font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 }
 
-/* Wrapping element */
-/* Set some basic padding to keep content from hitting the edges */
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+.everbank-section {
+    margin-top: 15px;
 }
 
-/* Carousel */
-.carousel-caption p {
-    font-size: 20px;
-    line-height: 1.4;
+.everbank-full-button {
+    margin-bottom: 8px;
 }
 
-/* Make .svg files in the carousel display properly in older browsers */
-.carousel-inner .item img[src$=".svg"] {
-    width: 100%;
+.everbank-alert {
+    margin-bottom: 0;
 }
 
-/* QR code generator */
-#qrCode {
-    margin: 15px;
+.everbank-dashboard-balance {
+
 }
 
-/* Hide/rearrange for smaller screens */
-@media screen and (max-width: 767px) {
-    /* Hide captions */
-    .carousel-caption {
-        display: none;
+.everbank-dashboard-balance__description {
+    font-size: 1.2em;
+}
+
+.everbank-dashboard-balance__amount {
+    font-size: 2.4em;
+    font-weight: bold;
+}
+
+.everbank-dashboard-nav {
+    font-size: 1.2em;
+    padding-left: 30px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.everbank-dashboard-nav__option {
+    margin: 0 10px;
+    display: inline-block;
+}
+
+@media(max-width: 768px) {
+    .everbank-dashboard-nav__option {
+        display: block;
+        margin-bottom: 5px;
     }
+}
+
+.everbank-dashboard-nav__icon {
+    margin-right: 5px;
+    font-size: 1.2em;
+    transform: translateY(2px);
+    -o-transform: translateY(2px);
+    -ms-transform: translateY(2px);
+    -webkit-transform: translateY(2px);
+    -moz-transform: translateY(2px);
+}
+
+.everbank-transaction-table {
+    border: 2px solid #222;
+    padding: 0;
+}
+
+.everbank-transaction-row {
+    border: 1px solid #666;
+    padding: 15px;
+}
+
+.everbank-transaction-row--header {
+    border: 1px solid #666;
+    color: white;
+    background-color: #222;
+    font-size: 1.2em;
+}
+
+.everbank-transaction-row:nth-child(even) {
+    background-color: #EFEFEF;
+}
+
+
+.everbank-transaction-row__cell {
+
+}
+
+.everbank-transaction-row__cell--left {
+    text-align: left;
+}
+
+.everbank-transaction-row__cell--center {
+    text-align: center;
+}
+
+.everbank-transaction-row__cell--right {
+    text-align: right;
+    font-weight: bold;
 }

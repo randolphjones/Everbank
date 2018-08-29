@@ -1,9 +1,28 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model Everbank.Web.Models.LoginFormModel
+
+@{
+    ViewData["Title"] = "Everbank";
 }
 
-<div class="row">
-    <div class="col-xs-12">
-        <h1>Coming soon: Everbank!</h1>
+<header class="row">
+    <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+        <h1>Welcome to Everbank!</h1>
+        <p>Login below to get started.</p>
     </div>
-</div>
+</header>
+<section class="row everbank-section">
+    <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+        <form asp-action="Login" asp-controller="Home">
+            <div class="form-group">
+                <label asp-for="EmailAddress">Email Address</label>
+                <input type="email" class="form-control" asp-for="EmailAddress">
+            </div>
+            <div class="form-group">
+                <label asp-for="Password">Password</label>
+                <input type="password" class="form-control" asp-for="Password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg col-xs-12 everbank-full-button"><strong>Login</strong> <span class="glyphicon glyphicon-chevron-right"></span></button>
+            <a asp-controller="Home" asp-action="CreateAccount" class="btn btn-default btn-lg col-xs-12 everbank-full-button">New to Everbank?</a>
+        </form>
+    </div>
+</section>
