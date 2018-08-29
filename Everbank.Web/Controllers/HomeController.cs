@@ -48,7 +48,7 @@ namespace Everbank.Web.Controllers
             User user = response.ResponseObject as User;
             if (user != null)
             {
-                // Ideally we would use async await here but the current behavior of this call is unpredictable
+                // Ideally we would use async await here but the current behavior of this call does not behave as expected when awaited
                 securityHelper.SignInAsync(HttpContext, user.Id, user.EmailAddress, user.FirstName).Wait();
                 messageHelper.AddMessagesToSession(messages, HttpContext);
                 return RedirectToAction("Dashboard");
@@ -86,7 +86,7 @@ namespace Everbank.Web.Controllers
 
                 if (user != null)
                 {
-                    // Ideally we would use async await here but the current behavior of this call is unpredictable
+                    // Ideally we would use async await here but the current behavior of this call does not behave as expected when awaited
                     securityHelper.SignInAsync(HttpContext, user.Id, user.EmailAddress, user.FirstName).Wait();
                     messageHelper.AddMessagesToSession(messages, HttpContext);
                     return RedirectToAction("Dashboard");

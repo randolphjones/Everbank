@@ -15,9 +15,6 @@ namespace Everbank.UnitTests
             UserRepository userRepository = new UserRepository();
             User userByEmail = userRepository.GetUser("    tEst@teST.com   ");
             ValidateUser(userByEmail);
-
-            User userById = userRepository.GetUser(1);
-            ValidateUser(userById);
         }
 
         [TestMethod]
