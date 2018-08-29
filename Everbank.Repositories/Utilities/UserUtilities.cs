@@ -13,14 +13,16 @@ namespace Everbank.Repositories.Utilities
         ///</summary>
         public static string HashString(string input)
         {
-            HashAlgorithm algorithm = SHA256.Create();
-            byte[] encryptedBytes = algorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach(byte b in encryptedBytes)
+            using(HashAlgorithm algorithm = SHA256.Create())
             {
-                stringBuilder.Append(b.ToString("x2"));
+                byte[] encryptedBytes = algorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+                StringBuilder stringBuilder = new StringBuilder();
+                foreach(byte b in encryptedBytes)
+                {
+                    stringBuilder.Append(b.ToString("x2"));
+                }
+                return stringBuilder.ToString();
             }
-            return stringBuilder.ToString();
         }
 
         ///<summary>
