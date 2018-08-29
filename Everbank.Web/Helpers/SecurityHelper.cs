@@ -9,13 +9,18 @@ using Everbank.Repositories.Contracts;
 
 namespace Everbank.Web.Helpers
 {
-    public static class SecurityHelper
+    public class SecurityHelper
     {
 
+        public SecurityHelper()
+        {
+
+        }
+        
         ///<summary>
         /// Signs in the current user
         ///</summary>
-        public static async Task SignInAsync(HttpContext httpContext, int userId, string emailAddress, string firstName)
+        public async Task SignInAsync(HttpContext httpContext, int userId, string emailAddress, string firstName)
         {
             ClaimsPrincipal claimsPrincipal = BuildClaimsPrincipal(userId, emailAddress, firstName);
             // AuthenticationProperties authenticationProperties = BuildAuthenticationProperties();
@@ -26,7 +31,7 @@ namespace Everbank.Web.Helpers
         ///<summary>
         /// Builds a Claims Principal object to used with Sign in
         ///</summary>
-        private static ClaimsPrincipal BuildClaimsPrincipal(int userId, string emailAddress, string firstName)
+        private ClaimsPrincipal BuildClaimsPrincipal(int userId, string emailAddress, string firstName)
         {
             List<Claim> claims = new List<Claim>() {
                 new Claim("UserId", userId.ToString()),
@@ -40,7 +45,7 @@ namespace Everbank.Web.Helpers
         ///<summary>
         /// Creates a user object from the provided ClaimsIdentity
         ///</summary>
-        public static User GetUserFromIdentity (ClaimsIdentity identity)
+        public User GetUserFromIdentity (ClaimsIdentity identity)
         {          
             User user = new User();
 
@@ -66,7 +71,7 @@ namespace Everbank.Web.Helpers
         ///<summary>
         /// Signs out the current user
         ///</summary>
-        public static async Task SignOutAsync(HttpContext httpContext)
+        public async Task SignOutAsync(HttpContext httpContext)
         {
             await httpContext.SignOutAsync();
         }

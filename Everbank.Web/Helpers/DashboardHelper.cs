@@ -9,19 +9,27 @@ using Everbank.Web.Models;
 
 namespace Everbank.Web.Helpers
 {
-    public static class DashboardHelper
+    public class DashboardHelper
     {
-        private static UserService userService = new UserService();
-        private static TransactionService transactionService = new TransactionService();
+        public DashboardHelper()
+        {
 
-        public static DashboardModel BuildDashboardModel(User user, List<Message> messages)
+        }
+        private UserService userService = new UserService();
+        private TransactionService transactionService = new TransactionService();
+        private MessageHelper messageHelper = new MessageHelper();
+
+        ///<summary>
+        /// Brings together the presentation components needed to build the Dashboard View Model
+        ///</summary>
+        public DashboardModel BuildDashboardModel(User user, List<Message> messages)
         {
             ServiceResponse transactionsResponse = transactionService.GetTransactions(user.Id);
-            MessageHelper.AppendResponseMessages(messages, transactionsResponse);
+            messageHelper.AppendResponseMessages(messages, transactionsResponse);
             List<Transaction> transactions = transactionsResponse.ResponseObject as List<Transaction>;
             
             ServiceResponse balanceResponse = transactionService.GetAccountBalance(transactions);
-            MessageHelper.AppendResponseMessages(messages, balanceResponse);
+            messageHelper.AppendResponseMessages(messages, balanceResponse);
             decimal balance = (decimal)balanceResponse.ResponseObject;
             
             DashboardModel dashboardModel = new DashboardModel() {

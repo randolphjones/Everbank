@@ -9,13 +9,17 @@ using System.Linq;
 
 namespace Everbank.Web.Helpers
 {
-    public static class MessageHelper
+    public class MessageHelper
     {
-        public static readonly string MESSAGES_KEY = "Messages";
+        public MessageHelper()
+        {
+
+        }
+        public readonly string MESSAGES_KEY = "Messages";
         ///<summary>
         /// Returns a css class to match a message type
         ///</summary>
-        public static string MessageTypeToClassName(MessageType messageType)
+        public string MessageTypeToClassName(MessageType messageType)
         {
             switch(messageType)
             {
@@ -35,7 +39,7 @@ namespace Everbank.Web.Helpers
         ///<summary>
         /// Appends the message collection with those from the provided response
         ///</summary>
-        public static void AppendResponseMessages(List<Message> messages, ServiceResponse response)
+        public void AppendResponseMessages(List<Message> messages, ServiceResponse response)
         {
             if (response.Messages != null && response.Messages.Count > 0)
             {
@@ -43,7 +47,7 @@ namespace Everbank.Web.Helpers
             }
         }
 
-        public static void AppendMessagesFromSession(List<Message> messages, HttpContext httpContext)
+        public void AppendMessagesFromSession(List<Message> messages, HttpContext httpContext)
         {
             if (httpContext.Session.Keys.Contains(MESSAGES_KEY))
             {
@@ -60,7 +64,7 @@ namespace Everbank.Web.Helpers
                 httpContext.Session.Remove(MESSAGES_KEY);
             }
         }
-        public static void AddMessagesToSession(List<Message> messages, HttpContext httpContext)
+        public void AddMessagesToSession(List<Message> messages, HttpContext httpContext)
         {
             if (messages != null && messages.Count > 0)
             {

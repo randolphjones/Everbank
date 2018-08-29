@@ -21,6 +21,9 @@ namespace Everbank.Web.Controllers
     {
         private UserService userService = new UserService();
         private TransactionService transactionService = new TransactionService();
+        private DashboardHelper dashboardHelper = new DashboardHelper();
+        private MessageHelper messageHelper = new MessageHelper();
+        private SecurityHelper securityHelper = new SecurityHelper();
         private List<Message> messages = new List<Message>();
 
         [HttpGet]
@@ -41,13 +44,13 @@ namespace Everbank.Web.Controllers
         {
             
             ServiceResponse response = userService.AuthenticateUser(loginFormModel.EmailAddress, loginFormModel.Password);
-            MessageHelper.AppendResponseMessages(messages, response);
+            messageHelper.AppendResponseMessages(messages, response);
             User user = response.ResponseObject as User;
             if (user != null)
             {
                 // Ideally we would use async await here but the current behavior of this call is unpredictable
-                SecurityHelper.SignInAsync(HttpContext, user.Id, user.EmailAddress, user.FirstName).Wait();
-                MessageHelper.AddMessagesToSession(messages, HttpContext);
+                securityHelper.SignInAsync(HttpContext, user.Id, user.EmailAddress, user.FirstName).Wait();
+                messageHelper.AddMessagesToSession(messages, HttpContext);
                 return RedirectToAction("Dashboard");
             }
             else
@@ -79,13 +82,13 @@ namespace Everbank.Web.Controllers
             {
                 ServiceResponse userResponse = userService.CreateUser(createAccountFormModel.EmailAddress, createAccountFormModel.Password, createAccountFormModel.FirstName);
                 User user = userResponse.ResponseObject as User;
-                MessageHelper.AppendResponseMessages(messages, userResponse);
+                messageHelper.AppendResponseMessages(messages, userResponse);
 
                 if (user != null)
                 {
                     // Ideally we would use async await here but the current behavior of this call is unpredictable
-                    SecurityHelper.SignInAsync(HttpContext, user.Id, user.EmailAddress, user.FirstName).Wait();
-                    MessageHelper.AddMessagesToSession(messages, HttpContext);
+                    securityHelper.SignInAsync(HttpContext, user.Id, user.EmailAddress, user.FirstName).Wait();
+                    messageHelper.AddMessagesToSession(messages, HttpContext);
                     return RedirectToAction("Dashboard");
                 }
                 else
@@ -99,11 +102,11 @@ namespace Everbank.Web.Controllers
         [HttpGet]
         public IActionResult Dashboard()
         {
-            MessageHelper.AppendMessagesFromSession(messages, HttpContext);
+            messageHelper.AppendMessagesFromSession(messages, HttpContext);
             if (HttpContext.User.Identity.IsAuthenticated)
             {
-                User user = SecurityHelper.GetUserFromIdentity(HttpContext.User.Identity as ClaimsIdentity);
-                DashboardModel dashboardModel = DashboardHelper.BuildDashboardModel(user, messages);
+                User user = securityHelper.GetUserFromIdentity(HttpContext.User.Identity as ClaimsIdentity);
+                DashboardModel dashboardModel = dashboardHelper.BuildDashboardModel(user, messages);
                 return View(dashboardModel);
             }
             else
@@ -145,13 +148,13 @@ namespace Everbank.Web.Controllers
                     return View("Transaction", transactionFormModel);
                 }
 
-                User user = SecurityHelper.GetUserFromIdentity(HttpContext.User.Identity as ClaimsIdentity);
+                User user = securityHelper.GetUserFromIdentity(HttpContext.User.Identity as ClaimsIdentity);
                 ServiceResponse response = transactionService.CreateTransaction(user.Id, transactionFormModel.Amount);
-                MessageHelper.AppendResponseMessages(messages, response);
+                messageHelper.AppendResponseMessages(messages, response);
                 Transaction transaction = response.ResponseObject as Transaction;
                 if (transaction != null)
                 {
-                    MessageHelper.AddMessagesToSession(messages, HttpContext);
+                    messageHelper.AddMessagesToSession(messages, HttpContext);
                     return RedirectToAction("Dashboard");
                 }
                 else
@@ -200,13 +203,13 @@ namespace Everbank.Web.Controllers
                     return View("Transaction", transactionFormModel);
                 }
 
-                User user = SecurityHelper.GetUserFromIdentity(HttpContext.User.Identity as ClaimsIdentity);
+                User user = securityHelper.GetUserFromIdentity(HttpContext.User.Identity as ClaimsIdentity);
                 ServiceResponse response = transactionService.CreateTransaction(user.Id, transactionFormModel.Amount * -1);
-                MessageHelper.AppendResponseMessages(messages, response);
+                messageHelper.AppendResponseMessages(messages, response);
                 Transaction transaction = response.ResponseObject as Transaction;
                 if (transaction != null)
                 {
-                    MessageHelper.AddMessagesToSession(messages, HttpContext);
+                    messageHelper.AddMessagesToSession(messages, HttpContext);
                     return RedirectToAction("Dashboard");
                 }
                 else
@@ -225,7 +228,7 @@ namespace Everbank.Web.Controllers
         [HttpGet]
         public IActionResult Logout()
         {
-            SecurityHelper.SignOutAsync(HttpContext).Wait();
+            securityHelper.SignOutAsync(HttpContext).Wait();
             return RedirectToAction("Index");
         }
 
