@@ -10,6 +10,10 @@ namespace Everbank.Service
     public class TransactionService
     {
         TransactionRepository transactionRepository = new TransactionRepository();
+
+        ///<summary>
+        /// Creates a transaction in the ledger
+        ///</summary>
         public ServiceResponse CreateTransaction(int userId, decimal amount)
         {
             if (amount == 0)
@@ -62,6 +66,10 @@ namespace Everbank.Service
                 };
             }
         }
+
+        ///<summary>
+        /// Gets transactions associated with a user
+        ///</summary>
         public ServiceResponse GetTransactions(int userId)
         {
             try
@@ -92,6 +100,9 @@ namespace Everbank.Service
             }
         }
 
+        ///<summary>
+        /// Gets a user's account balance
+        ///</summary>
         public ServiceResponse GetAccountBalance(int userId)
         {
             try
@@ -110,7 +121,10 @@ namespace Everbank.Service
                 };
             }
         }
-
+        
+        ///<summary>
+        /// Gets a user's account balance
+        ///</summary>
         public ServiceResponse GetAccountBalance(List<Transaction> transactions)
         {
             decimal total = transactions.Select(transaction => transaction.Amount).Sum();

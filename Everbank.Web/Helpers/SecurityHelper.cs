@@ -18,7 +18,7 @@ namespace Everbank.Web.Helpers
         }
         
         ///<summary>
-        /// Signs in the current user
+        /// Signs in the current user's cookie
         ///</summary>
         public async Task SignInAsync(HttpContext httpContext, int userId, string emailAddress, string firstName)
         {
@@ -69,7 +69,7 @@ namespace Everbank.Web.Helpers
         }
 
         ///<summary>
-        /// Signs out the current user
+        /// Signs out the current user's cookie
         ///</summary>
         public async Task SignOutAsync(HttpContext httpContext)
         {

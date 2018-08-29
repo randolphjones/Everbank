@@ -49,7 +49,7 @@ namespace Everbank.Repositories
         }
 
         ///<summary>
-        /// Get a transaction by unique Id
+        /// Gets a transaction by unique Id
         ///</summary>
         public Transaction GetTransaction(int uid)
         {
