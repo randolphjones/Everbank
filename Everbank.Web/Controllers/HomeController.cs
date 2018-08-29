@@ -47,6 +47,7 @@ namespace Everbank.Web.Controllers
             {
                 // Ideally we would use async await here but the current behavior of this call is unpredictable
                 SecurityHelper.SignInAsync(HttpContext, user.Id, user.EmailAddress, user.FirstName).Wait();
+                MessageHelper.AddMessagesToSession(messages, HttpContext);
                 return RedirectToAction("Dashboard");
             }
             else
@@ -84,6 +85,7 @@ namespace Everbank.Web.Controllers
                 {
                     // Ideally we would use async await here but the current behavior of this call is unpredictable
                     SecurityHelper.SignInAsync(HttpContext, user.Id, user.EmailAddress, user.FirstName).Wait();
+                    MessageHelper.AddMessagesToSession(messages, HttpContext);
                     return RedirectToAction("Dashboard");
                 }
                 else
@@ -97,6 +99,7 @@ namespace Everbank.Web.Controllers
         [HttpGet]
         public IActionResult Dashboard()
         {
+            MessageHelper.AppendMessagesFromSession(messages, HttpContext);
             if (HttpContext.User.Identity.IsAuthenticated)
             {
                 User user = SecurityHelper.GetUserFromIdentity(HttpContext.User.Identity as ClaimsIdentity);
@@ -148,7 +151,7 @@ namespace Everbank.Web.Controllers
                 Transaction transaction = response.ResponseObject as Transaction;
                 if (transaction != null)
                 {
-                    // TODO: Way to append success messages?
+                    MessageHelper.AddMessagesToSession(messages, HttpContext);
                     return RedirectToAction("Dashboard");
                 }
                 else
@@ -203,7 +206,7 @@ namespace Everbank.Web.Controllers
                 Transaction transaction = response.ResponseObject as Transaction;
                 if (transaction != null)
                 {
-                    // TODO: Way to append success messages?
+                    MessageHelper.AddMessagesToSession(messages, HttpContext);
                     return RedirectToAction("Dashboard");
                 }
                 else

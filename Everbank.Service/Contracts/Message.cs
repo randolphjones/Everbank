@@ -2,6 +2,7 @@ using System;
 
 namespace Everbank.Service.Contracts
 {
+    [Serializable]
     public class Message
     {
         public string Text { get; set; }
