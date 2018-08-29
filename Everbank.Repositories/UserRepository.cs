@@ -14,7 +14,7 @@ namespace Everbank.Repositories
         }
 
         ///<summary>
-        /// Gets a user record from the dataset
+        /// Gets a user record by email address
         ///</summary>
         public User GetUser(string emailAddress)
         {

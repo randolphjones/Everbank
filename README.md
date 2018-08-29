@@ -4,10 +4,10 @@ Introduction to the app and what it does
 ## Requirements
 * .NET Core >= 2.1
 
-**Helpful for development but not required**:
-* Visual Studio Code
-* Visual Studio Code Solution Explorer Plugin
-* Visual Studio Code C# Plugin
+    ### Helpful for development but not required:
+    * Visual Studio Code
+    * Visual Studio Code Solution Explorer Plugin
+    * Visual Studio Code C# Plugin
 
 ## Dependencies
 At the moment this project doesn't require any kind of significant packages
