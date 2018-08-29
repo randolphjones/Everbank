@@ -16,6 +16,7 @@ namespace Everbank.Web.Helpers
 
         }
         public readonly string MESSAGES_KEY = "Messages";
+        
         ///<summary>
         /// Returns a css class to match a message type
         ///</summary>
@@ -47,6 +48,9 @@ namespace Everbank.Web.Helpers
             }
         }
 
+        ///<summary>
+        /// Appends the message collection with those from the provided HttpContext Session
+        ///</summary>
         public void AppendMessagesFromSession(List<Message> messages, HttpContext httpContext)
         {
             if (httpContext.Session.Keys.Contains(MESSAGES_KEY))
@@ -64,6 +68,10 @@ namespace Everbank.Web.Helpers
                 httpContext.Session.Remove(MESSAGES_KEY);
             }
         }
+
+        ///<summary>
+        /// Stores the provided message collection in the HttpContext Session
+        ///</summary>
         public void AddMessagesToSession(List<Message> messages, HttpContext httpContext)
         {
             if (messages != null && messages.Count > 0)
